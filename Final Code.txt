@@ -1,0 +1,102 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # 0 = all, 1 = info, 2 = warnings, 3 = errors
+import tensorflow as tf 
+from tensorflow.keras.models import load_model
+import cv2
+import numpy as np
+import time
+
+# Disable scientific notation for clarity
+np.set_printoptions(suppress=True)
+
+# Load the model
+model = load_model("keras_Model.h5", compile=False)
+
+# Load the labels
+class_names = open("labels.txt", "r").readlines()
+
+# CAMERA can be 0 or 1 based on default camera of your computer
+camera = cv2.VideoCapture(0)
+
+# Initialize variables
+last_print_time = time.time()
+current_class = ""
+current_confidence = 0
+
+while True:
+    # Grab the webcamera's image.
+    ret, frame = camera.read()
+    if not ret:
+        print("Failed to grab frame from camera.")
+        break
+
+    # Create a copy of the frame for display
+    display_frame = frame.copy()
+    
+    # Resize the image for model prediction
+    image = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
+    
+    # Make the image a numpy array and reshape it to the model's input shape
+    image_array = np.asarray(image, dtype=np.float32).reshape(1, 224, 224, 3)
+    
+    # Normalize the image array
+    image_array = (image_array / 127.5) - 1
+
+    # Predict the model
+    prediction = model.predict(image_array, verbose=0)
+    index = np.argmax(prediction)
+    confidence_score = prediction[0][index]
+
+    # Get current time
+    current_time = time.time()
+
+    # Update current class and confidence if above threshold
+    if confidence_score > 0.75:
+        current_class = class_names[index].strip()
+        current_confidence = confidence_score
+        
+        # Print to console every 5 seconds
+        if (current_time - last_print_time) >= 5:
+            print("Class:", current_class)
+            print("Confidence Score:", str(int(np.round(confidence_score * 100))) + "%")
+            last_print_time = current_time
+
+    # Draw bounding box and label on the original frame (not the resized one)
+    if confidence_score > 0.75:
+        # Define box coordinates (adjust these as needed)
+        height, width = frame.shape[:2]
+        x1, y1 = int(width * 0.25), int(height * 0.25)
+        x2, y2 = int(width * 0.75), int(height * 0.75)
+        
+        # Draw rectangle
+        cv2.rectangle(display_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        
+        # Create label text
+        label = f"{current_class} ({int(current_confidence*100)}%)"
+        
+        # Get text size
+        (text_width, text_height), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)
+        
+        # Draw background rectangle for text
+        cv2.rectangle(display_frame, 
+                     (x1, y1 - text_height - 10), 
+                     (x1 + text_width, y1), 
+                     (0, 255, 0), -1)
+        
+        # Put text
+        cv2.putText(display_frame, label, 
+                   (x1, y1 - 5), 
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2)
+
+    # Show the frame with bounding box
+    cv2.imshow("Traffic Sign Detection", display_frame)
+
+    # Listen to the keyboard for presses
+    keyboard_input = cv2.waitKey(1)
+    
+    # 27 is the ASCII for the esc key
+    if keyboard_input == 27:
+        break
+
+camera.release()
+cv2.destroyAllWindows()
