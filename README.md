@@ -227,8 +227,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Contact
 
 For questions or collaboration opportunities, please contact:
-- **H. M. Shakib** - [GitHub](https://github.com/yourusername)
-- **Project Link**: [https://github.com/yourusername/traffic-sign-recognition](https://github.com/yourusername/traffic-sign-recognition)
+- **Md Shakib Shakib** - [GitHub](https://github.com/iskb-official)
+- **Project Link**: [https://github.com/iskb-official/Optimizing-Traffic-Sign-Recognition-for-Autonomous-Vehichles-Using-SSD-MobileNet_v2](https://github.com/iskb-official/Optimizing-Traffic-Sign-Recognition-for-Autonomous-Vehichles-Using-SSD-MobileNet_v2)
 
 ## 🙏 Acknowledgments
 
