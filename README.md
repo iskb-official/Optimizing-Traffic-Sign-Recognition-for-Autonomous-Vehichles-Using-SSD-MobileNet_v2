@@ -11,7 +11,7 @@ This repository contains the implementation, models, and documentation for the p
 
 ## 📄 Abstract
 
-This project presents a **lightweight Traffic Sign Recognition System (TSRS)** for real-time operation on embedded autonomous vehicle platforms. The system integrates **SSD-MobileNet_v2** for efficient traffic sign detection with sensor fusion and motor control to enable responsive autonomous navigation.
+This paper describes how we can improve Traffic Sign Recognition System to use in autonomous vehicles. The model we used was SSD-MobileNet_v2 which was very efficient. It can operate in real-time to integrate data from all the systems. This system includes obtaining images, merging sensor data and using a structured process to control the vehicle. It addresses some of the main limitations including little movements, operating in difficult lighting and performing all this in real-time on the system platform. It was able to detect items 95.9 percent accuracy in 22 frame per second. This study makes a key improvement in making autonomous vehicles safer and more intelligent.
 
 ## ✨ Key Features
 
